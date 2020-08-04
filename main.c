@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
+#include <string.h>
 
 void entorno_r(int k, int z, imagem img,int w, int h, int N){
   float soma=0; 
@@ -43,6 +44,7 @@ float media(float array[]){
 	float count = 0.0; 
 	float count_final = 0.0;
 	for(int k=0; k<100; k++){
+	printf("%f, ", (array[k]/1000.0));
 		count = count + (array[k]/1000.0);
 	}
 	count_final = count/100;
@@ -73,7 +75,14 @@ float desvio(float array[], float a){
 int main() {
   imagem img;
   
-  img = abrir_imagem("data/cachorro.jpg");
+  char input_nome_arquivo[40];
+    char output_nome_arquivo[50] ;
+    char *ptr;
+    printf("selecionar imagem:\n");
+    scanf("%s", input_nome_arquivo);
+    printf("saida da imagem:\n");
+    scanf("%s", output_nome_arquivo);
+    img = abrir_imagem(input_nome_arquivo);
   
   int N = 5;
   clock_t Ticks[2];
@@ -100,8 +109,12 @@ int main() {
 	  results[aux] = Tempo;
 	}	  
 
-  salvar_imagem("cachorro-out-linear.jpg", &img);
-  liberar_imagem(&img);
+  strtok_r(input_nome_arquivo, "/", &ptr);
+    strcat(output_nome_arquivo, ptr);
+
+ 
+    salvar_imagem(output_nome_arquivo, &img);
+    liberar_imagem(&img);
   
   
   float media_final = media(results);
