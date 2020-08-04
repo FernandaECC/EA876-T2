@@ -57,7 +57,7 @@ float media(float array[]){
 		count = count + (array[k]/1000.0);
 	}
 	count_final = count/100;
-	printf("A media eh: %f ms\n", count_final);
+	printf("A media eh: %f s\n", count_final);
 	return count_final;
 }
 
@@ -71,7 +71,7 @@ float desvio(float array[], float a){
     }
 
     float sigma = sqrt(variacoes / 100);
-    printf("Desvio padrao: d = %.6f ms\n", sigma);
+    printf("Desvio padrao: d = %.6f s\n", sigma);
 }
 
 
@@ -120,7 +120,7 @@ int main(){
 
 
     /*Criar processos filhos*/
-
+	(*aux) = 0;
     for(int k = 0; k < N_PROCESSOS ; k++){
         filho[k] = fork();
        
@@ -129,7 +129,8 @@ int main(){
             /* Processo filho(k) Opera */ 
             int i, j;
 		
-		    
+		    for((*aux); (*aux)<101; aux++){
+    	  		Ticks[0] = clock();
 		    for (int i = k; i<(w); i += 3) {
 		        for (int j = 0; j<(h); j++) {
 		            if( (i >= N) && (j >= N) && ( (w) - i > N) && ( (h) - j > N) ){
@@ -147,9 +148,13 @@ int main(){
 		            }
 		        }
 		    }
-		    
+		   Ticks[1] = clock();    
+		   double Tempo = (Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
+	  	  (*resultado)[(*aux)] = Tempo;	 
+	  			//printf("%i: Tempo gasto: %g s.\n"), ((*aux)), (Tempo/1000.0);
+	  	  (*aux)++; 
             exit(0);
-            
+            	}
 	  	}    
         }
         
@@ -177,8 +182,8 @@ int main(){
     salvar_imagem("cachorro-out-processos.jpg", &img);
     liberar_imagem(&img);
     
-    //float media_final = media(results);
-    //float desvio_padrao = desvio(results, media_final);
+    float media_final = media(results);
+    float desvio_padrao = desvio(results, media_final);
     //gcc -omain_p main_p.c imageprocessing.c  -I./ -lfreeimage -lm
     return 0;
 }
