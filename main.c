@@ -44,11 +44,11 @@ float media(float array[]){
 	float count = 0.0; 
 	float count_final = 0.0;
 	for(int k=0; k<100; k++){
-	printf("%f, ", (array[k]/1000.0));
+	//printf("%f, ", (array[k]/1000.0));
 		count = count + (array[k]/1000.0);
 	}
 	count_final = count/100;
-	printf("A media eh: %6f s\n", count_final);
+	//printf("A media eh: %6f s\n", count_final);
 	return count_final;
 }
 
@@ -62,7 +62,7 @@ float desvio(float array[], float a){
     }
 
     float sigma = sqrt(variacoes / 100);
-    printf("Desvio padrao: d = %.6f s\n", sigma);
+    //printf("Desvio padrao: d = %.6f s\n", sigma);
 }
 
 
@@ -75,12 +75,12 @@ float desvio(float array[], float a){
 int main() {
   imagem img;
   
-  char input_nome_arquivo[40];
+    char input_nome_arquivo[40];
     char output_nome_arquivo[50] ;
     char *ptr;
-    printf("selecionar imagem:\n");
+    //printf("selecionar imagem:\n");
     scanf("%s", input_nome_arquivo);
-    printf("saida da imagem:\n");
+    //printf("saida da imagem:\n");
     scanf("%s", output_nome_arquivo);
     img = abrir_imagem(input_nome_arquivo);
   
@@ -120,6 +120,15 @@ int main() {
   float media_final = media(results);
   float desvio_padrao = desvio(results, media_final);
   
+  
+  //plotar o grafico
+  printf ( "# x \t y \t    z \t  t\n" );
+  
+  for(int f=0; f<101; f++){
+  printf ( "%i \t %f \t %f \t %f\n", f, (results[f]/1000.00), media_final, desvio_padrao);
+  }
+  
   return 0;
 }
 //gcc -omain main.c imageprocessing.c  -I./ -lfreeimage -lm
+

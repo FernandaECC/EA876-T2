@@ -162,6 +162,13 @@ Ticks[0] = clock();
     //gcc -omain_t main_t.c imageprocessing.c  -I./ -lfreeimage -lm -lpthread
     
     
+//plotar o grafico
+  printf ( "# x \t y \t    z \t  t\n" );
+  
+  for(int f=0; f<101; f++){
+  printf ( "%i \t %f \t %f \t %f\n", f, (results[f]/1000.00), media_final, desvio_padrao);
+  }
+    
 
     
     
