@@ -73,7 +73,9 @@ float desvio(float array[], float a){
 }
 
 
-
+clock_t Ticks[2];
+float results[100];
+int aux = 0; 
 
 void* funcao_thread(void *arg) {
   /* Inicializacao: guardar o proprio numero da thread */
@@ -84,16 +86,28 @@ void* funcao_thread(void *arg) {
 
     float soma = 0; 
     int i, j;
-    for (int i = M; i<(img.width); i += 3) {
-        for (int j = 0; j<(img.height); j++) {
-            if( (i >= N) && (j >= N) && (img.width - i > N) && (img.height - j > N) ){
-               entorno_r(i, j, img, N);
-		entorno_g(i, j, img, N);
-		entorno_b(i, j, img, N);
-            }
-        }
-    }
-    return NULL;
+ 
+    for(aux; aux<101; aux++){
+    	Ticks[0] = clock(); 
+	    for (int i = M; i<(img.width); i += 3) {
+		for (int j = 0; j<(img.height); j++) {
+		    if( (i >= N) && (j >= N) && (img.width - i > N) && (img.height - j > N) ){
+		       entorno_r(i, j, img, N);
+			entorno_g(i, j, img, N);
+			entorno_b(i, j, img, N);
+		    }
+		}
+	    }
+	    Ticks[1] = clock();
+	    double Tempo = (Ticks[1] - Ticks[0]) *1000.0  / CLOCKS_PER_SEC;
+	    //printf("%i: %7f s \n", aux, (Tempo/1000.0));
+	    results[aux] = Tempo;
+	    
+	    
+	    
+	    
+	    return NULL;
+    }	    
   }
     return NULL;
 }
@@ -124,6 +138,9 @@ img = abrir_imagem("data/cachorro.jpg");
 
     salvar_imagem("cachorro-out-thread.jpg", &img);
     liberar_imagem(&img);
+    
+    float media_final = media(results);
+    float desvio_padrao = desvio(results, media_final);
     //gcc -omain_t main_t.c imageprocessing.c  -I./ -lfreeimage -lm -lpthread
     return 0;
 }
