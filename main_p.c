@@ -9,7 +9,7 @@
 #include <math.h>
 
 #define N_PROCESSOS  3
-float results[100];
+
 
 void entorno_r(int k, int z, float *r, int w, int h, int N){
   float soma=0; 
@@ -53,10 +53,15 @@ void entorno_g(int k, int z, float *g, int w, int h, int N){
 float media(float array[]){
 	float count = 0.0; 
 	float count_final = 0.0;
-	for(int k=0; k<100; k++){
+	int o = 0;
+	for(int k=0; k<202; k++){
+		if(array[k] != 0.000000){
+		//printf("%f, ", (array[k]/1000.0));
 		count = count + (array[k]/1000.0);
+		o++;
+		}
 	}
-	count_final = count/100;
+	count_final = count/o;
 	printf("A media eh: %f s\n", count_final);
 	return count_final;
 }
@@ -65,9 +70,11 @@ float media(float array[]){
 float desvio(float array[], float a){
 
     float variacoes = 0;
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 202; i++) {
+        if(array[i] != 0.000000){
         float v = (array[i]/1000.0) - a;
         variacoes += v * v;
+        }
     }
 
     float sigma = sqrt(variacoes / 100);
@@ -79,7 +86,7 @@ float desvio(float array[], float a){
 
 
 int main(){
-
+float results[100];
     imagem img;
     img = abrir_imagem("data/cachorro.jpg");
     
@@ -121,6 +128,11 @@ int main(){
 
     /*Criar processos filhos*/
 	(*aux) = 0;
+	
+	//inicio
+	int q = 0;
+	for(q=0; q<101; q++){
+    Ticks[0] = clock();
     for(int k = 0; k < N_PROCESSOS ; k++){
         filho[k] = fork();
        
@@ -128,9 +140,6 @@ int main(){
 
             /* Processo filho(k) Opera */ 
             int i, j;
-		
-		    for((*aux); (*aux)<101; aux++){
-    	  		Ticks[0] = clock();
 		    for (int i = k; i<(w); i += 3) {
 		        for (int j = 0; j<(h); j++) {
 		            if( (i >= N) && (j >= N) && ( (w) - i > N) && ( (h) - j > N) ){
@@ -148,13 +157,8 @@ int main(){
 		            }
 		        }
 		    }
-		   Ticks[1] = clock();    
-		   double Tempo = (Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
-	  	  (*resultado)[(*aux)] = Tempo;	 
-	  			//printf("%i: Tempo gasto: %g s.\n"), ((*aux)), (Tempo/1000.0);
-	  	  (*aux)++; 
             exit(0);
-            	}
+            	
 	  	}    
         }
         
@@ -165,11 +169,22 @@ int main(){
         waitpid (filho[k], NULL, 0);
     }
     
-    int u = 0;
-    while(u < 101){
-  	results[u] = (*resultado)[u];
-  	u++;
-    } 
+    
+  
+    Ticks[1] = clock();    
+    double Tempo = (Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
+    (*resultado)[q] = Tempo;
+    
+    	
+    //printf("resultado: %f, \n", (Tempo/1000)); 
+    //printf("vetor resultado: %f, \n", ((*resultado)[q]/1000)); 
+    // printf("vetor resultado: %f, \n", (results[q]/1000)); 
+    q++; 
+    }
+    //fim
+     
+
+ 
 
     for(int i = 0; i < w; i++){
       for(int j = 0; j < h; j++){
@@ -179,11 +194,13 @@ int main(){
       }
     }
 
+	
+ 
     salvar_imagem("cachorro-out-processos.jpg", &img);
     liberar_imagem(&img);
     
-    float media_final = media(results);
-    float desvio_padrao = desvio(results, media_final);
+    float media_final = media(*resultado);
+    float desvio_padrao = desvio(*resultado, media_final);
     //gcc -omain_p main_p.c imageprocessing.c  -I./ -lfreeimage -lm
     return 0;
 }
