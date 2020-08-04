@@ -7,6 +7,7 @@
 #include <imageprocessing.h>
 #include <time.h>
 #include <math.h>
+#include <string.h>
 
 #define N_PROCESSOS  3
 
@@ -84,9 +85,17 @@ float desvio(float array[], float a){
 
 
 int main(){
-float results[100];
+    float results[100];
     imagem img;
-    img = abrir_imagem("data/cachorro.jpg");
+    //img = abrir_imagem("data/cachorro.jpg");
+    char input_nome_arquivo[40];
+    char output_nome_arquivo[50] ;
+    char *ptr;
+    printf("selecionar imagem:\n");
+    scanf("%s", input_nome_arquivo);
+    printf("saida da imagem:\n");
+    scanf("%s", output_nome_arquivo);
+    img = abrir_imagem(input_nome_arquivo);
     
     clock_t Ticks[2];
     
@@ -182,19 +191,13 @@ for(q=0; q<101; q++){
     //fim
      
 
- /*
 
-    for(int i = 0; i < w; i++){
-      for(int j = 0; j < h; j++){
-        img.r[j*w + i] = r[j*w + i];
-        img.g[j*w + i] = g[j*w + i];
-        img.b[j*w + i] = b[j*w + i];
-      }
-    }*/
 
-	
+    strtok_r(input_nome_arquivo, "/", &ptr);
+    strcat(output_nome_arquivo, ptr);
+
  
-    salvar_imagem("cachorro-out-processos.jpg", &img);
+    salvar_imagem(output_nome_arquivo, &img);
     liberar_imagem(&img);
     
     float media_final = media(*resultado);
