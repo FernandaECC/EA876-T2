@@ -54,14 +54,13 @@ float media(float array[]){
 	float count = 0.0; 
 	float count_final = 0.0;
 	int o = 0;
-	for(int k=0; k<202; k++){
-		if(array[k] != 0.000000){
+	for(int k=0; k<101; k++){
 		//printf("%f, ", (array[k]/1000.0));
 		count = count + (array[k]/1000.0);
-		o++;
+		
 		}
-	}
-	count_final = count/o;
+	
+	count_final = count/100;
 	printf("A media eh: %f s\n", count_final);
 	return count_final;
 }
@@ -70,11 +69,10 @@ float media(float array[]){
 float desvio(float array[], float a){
 
     float variacoes = 0;
-    for (int i = 0; i < 202; i++) {
-        if(array[i] != 0.000000){
+    for (int i = 0; i < 101; i++) {
         float v = (array[i]/1000.0) - a;
         variacoes += v * v;
-        }
+        
     }
 
     float sigma = sqrt(variacoes / 100);
@@ -130,9 +128,11 @@ float results[100];
 	(*aux) = 0;
 	
 	//inicio
-	int q = 0;
-	for(q=0; q<101; q++){
+int q = 0;
+for(q=0; q<101; q++){
     Ticks[0] = clock();
+    
+    
     for(int k = 0; k < N_PROCESSOS ; k++){
         filho[k] = fork();
        
@@ -174,12 +174,6 @@ float results[100];
     Ticks[1] = clock();    
     double Tempo = (Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
     (*resultado)[q] = Tempo;
-    
-    	
-    //printf("resultado: %f, \n", (Tempo/1000)); 
-    //printf("vetor resultado: %f, \n", ((*resultado)[q]/1000)); 
-    // printf("vetor resultado: %f, \n", (results[q]/1000)); 
-    q++; 
     }
     //fim
      
@@ -196,7 +190,7 @@ float results[100];
 
 	
  
-    salvar_imagem("cachorro-out-processos.jpg", &img);
+    salvar_imagem("cachorro-out-processos1.jpg", &img);
     liberar_imagem(&img);
     
     float media_final = media(*resultado);
