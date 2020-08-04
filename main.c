@@ -96,7 +96,7 @@ int main() {
 	  }
 	  Ticks[1] = clock();
 	  double Tempo = (Ticks[1] - Ticks[0]) *1000.0  / CLOCKS_PER_SEC;
-	  printf("%i: %7f s \n", aux, (Tempo/1000.0));
+	  //printf("%i: %7f s \n", aux, (Tempo/1000.0));
 	  results[aux] = Tempo;
 	}	  
 
@@ -110,4 +110,3 @@ int main() {
   return 0;
 }
 //gcc -omain main.c imageprocessing.c  -I./ -lfreeimage -lm
-
