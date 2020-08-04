@@ -55,7 +55,7 @@ float media(float array[]){
 	float count_final = 0.0;
 	int o = 0;
 	for(int k=0; k<101; k++){
-		//printf("%f, ", (array[k]/1000.0));
+		printf("%f, ", (array[k]/1000.0));
 		count = count + (array[k]/1000.0);
 		
 		}
@@ -124,15 +124,14 @@ float results[100];
 
 
 
-    /*Criar processos filhos*/
-	(*aux) = 0;
+   
 	
 	//inicio
 int q = 0;
 for(q=0; q<101; q++){
     Ticks[0] = clock();
     
-    
+    /*Criar processos filhos*/
     for(int k = 0; k < N_PROCESSOS ; k++){
         filho[k] = fork();
        
@@ -143,17 +142,10 @@ for(q=0; q<101; q++){
 		    for (int i = k; i<(w); i += 3) {
 		        for (int j = 0; j<(h); j++) {
 		            if( (i >= N) && (j >= N) && ( (w) - i > N) && ( (h) - j > N) ){
-		            //for(a=0; a<101; a++){
-				//Ticks[0] = clock();
+
 		                entorno_r(i, j, r, w, h, N);
 		                entorno_b(i, j, b, w, h, N);
 		                entorno_g(i, j, g, w, h, N);
-		                //Ticks[1] = clock();    
-				//double Tempo = (Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
-	  			//(*resultado)[(*aux)] = Tempo;	 
-	  			//printf("%i: Tempo gasto: %g s.\n"), ((*aux)), (Tempo/1000.0);
-	  			//(*aux)++;
-	  			//}
 		            }
 		        }
 		    }
@@ -174,11 +166,23 @@ for(q=0; q<101; q++){
     Ticks[1] = clock();    
     double Tempo = (Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
     (*resultado)[q] = Tempo;
+    
+    if(q==0){
+        for(int i = 0; i < w; i++){
+      for(int j = 0; j < h; j++){
+        img.r[j*w + i] = r[j*w + i];
+        img.g[j*w + i] = g[j*w + i];
+        img.b[j*w + i] = b[j*w + i];
+      }
+    }
+    
+    }
+    
     }
     //fim
      
 
- 
+ /*
 
     for(int i = 0; i < w; i++){
       for(int j = 0; j < h; j++){
@@ -186,11 +190,11 @@ for(q=0; q<101; q++){
         img.g[j*w + i] = g[j*w + i];
         img.b[j*w + i] = b[j*w + i];
       }
-    }
+    }*/
 
 	
  
-    salvar_imagem("cachorro-out-processos1.jpg", &img);
+    salvar_imagem("cachorro-out-processos.jpg", &img);
     liberar_imagem(&img);
     
     float media_final = media(*resultado);
