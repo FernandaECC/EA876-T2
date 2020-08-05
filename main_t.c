@@ -5,6 +5,7 @@
 #include <time.h>
 #include <math.h>
 #include <string.h>
+#include <sys/time.h>
 
 #define THREADS_MAX 3
 
@@ -52,11 +53,11 @@ float media(float array[]){
 	float count = 0.0; 
 	float count_final = 0.0;
 	for(int k=0; k<100; k++){
-	printf("%f, ", (array[k]/1000.0));
-		count = count + (array[k]/1000.0);
+	//printf("%f, ", (array[k]/1000.0));
+		count = count + (array[k]);
 	}
 	count_final = count/100;
-	printf("A media eh: %6f s\n", count_final);
+	//printf("A media eh: %6f s\n", count_final);
 	return count_final;
 }
 
@@ -65,18 +66,18 @@ float desvio(float array[], float a){
 
     float variacoes = 0;
     for (int i = 0; i < 100; i++) {
-        float v = (array[i]/1000.0) - a;
+        float v = (array[i]) - a;
         variacoes += v * v;
     }
 
     float sigma = sqrt(variacoes / 100);
-    printf("Desvio padrao: d = %.6f s\n", sigma);
+    //printf("Desvio padrao: d = %.6f s\n", sigma);
 }
 
 
-clock_t Ticks[2];
+
 float results[100];
-int aux = 0; 
+
 
 void* funcao_thread(void *arg) {
   /* Inicializacao: guardar o proprio numero da thread */
@@ -87,9 +88,7 @@ void* funcao_thread(void *arg) {
 
     float soma = 0; 
     int i, j;
- 
-    for(aux; aux<101; aux++){
-    	Ticks[0] = clock(); 
+    	 
 	    for (int i = M; i<(img.width); i += 3) {
 		for (int j = 0; j<(img.height); j++) {
 		    if( (i >= N) && (j >= N) && (img.width - i > N) && (img.height - j > N) ){
@@ -101,7 +100,7 @@ void* funcao_thread(void *arg) {
 	    }
 	    
 	    return NULL;
-    }	    
+    	    
   }
     return NULL;
 }
@@ -111,19 +110,21 @@ int main(){
     pthread_t threads[THREADS_MAX];
     int thread_id[THREADS_MAX];
 
+struct timeval rt0, rt1, drt;
+
 char input_nome_arquivo[40];
     char output_nome_arquivo[50] ;
     char *ptr;
-    printf("selecionar imagem:\n");
+    //printf("selecionar imagem:\n");
     scanf("%s", input_nome_arquivo);
-    printf("saida da imagem:\n");
+   // printf("saida da imagem:\n");
     scanf("%s", output_nome_arquivo);
     img = abrir_imagem(input_nome_arquivo);
 
 int q=0;
 //inicio
 for(q=0; q<101; q++){
-Ticks[0] = clock();
+    	  gettimeofday(&rt0, NULL);
 
 /* Identificadores de thread */
     for (int i = 0; i < THREADS_MAX; i++) {
@@ -143,11 +144,11 @@ Ticks[0] = clock();
     }
     
     //fim
-    Ticks[1] = clock();
-    
-    double Tempo = (Ticks[1] - Ticks[0]) *1000.0  / CLOCKS_PER_SEC;
-    results[q] = Tempo;
-    printf("%7f, ", (Tempo/1000.0));
+    gettimeofday(&rt1, NULL);
+	  timersub(&rt1, &rt0, &drt);
+	  double Tempo = (double) drt.tv_usec / 1000000 + (double) drt.tv_sec ;
+	  results[q] = Tempo;
+	  //printf ("Total time = %f seconds\n", Tempo);
 	}    
 
     strtok_r(input_nome_arquivo, "/", &ptr);
@@ -162,13 +163,10 @@ Ticks[0] = clock();
     //gcc -omain_t main_t.c imageprocessing.c  -I./ -lfreeimage -lm -lpthread
     
     
-//plotar o grafico
-  printf ( "# x \t y \t    z \t  t\n" );
+  //printf ( "# x \t y \t z \t t\n" );
   
-  for(int f=0; f<101; f++){
-  printf ( "%i \t %f \t %f \t %f\n", f, (results[f]/1000.00), media_final, desvio_padrao);
-  }
-    
+  
+  printf ( "thread %f %f\n",  media_final, desvio_padrao);
 
     
     

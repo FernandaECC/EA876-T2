@@ -3,6 +3,8 @@
 #include <math.h>
 #include <time.h>
 #include <string.h>
+#include <sys/time.h>
+
 
 void entorno_r(int k, int z, imagem img,int w, int h, int N){
   float soma=0; 
@@ -45,7 +47,7 @@ float media(float array[]){
 	float count_final = 0.0;
 	for(int k=0; k<100; k++){
 	//printf("%f, ", (array[k]/1000.0));
-		count = count + (array[k]/1000.0);
+		count = count + (array[k]);
 	}
 	count_final = count/100;
 	//printf("A media eh: %6f s\n", count_final);
@@ -57,7 +59,7 @@ float desvio(float array[], float a){
 
     float variacoes = 0;
     for (int i = 0; i < 100; i++) {
-        float v = (array[i]/1000.0) - a;
+        float v = (array[i]) - a;
         variacoes += v * v;
     }
 
@@ -86,14 +88,16 @@ int main() {
   
   int N = 5;
   clock_t Ticks[2];
-    
+struct timeval rt0, rt1, drt;
+
   int w = img.width;
   int h = img.height;
   int tam = w*h;
   float results[100];
   int aux = 0;  
     for(aux; aux<101; aux++){ 
-    	  Ticks[0] = clock();
+    	  //Ticks[0] = clock();
+    	  gettimeofday(&rt0, NULL);
 	  for (int i=0; i<(w); i++) {
 	    for (int j=0; j<(h); j++) {
 	      if( (i>=N) && (j>=N) && (w - i > N) && (h - j > N) ){
@@ -103,10 +107,15 @@ int main() {
 	      }
 	    }
 	  }
-	  Ticks[1] = clock();
-	  double Tempo = (Ticks[1] - Ticks[0]) *1000.0  / CLOCKS_PER_SEC;
+	  //Ticks[1] = clock();
+	  //double Tempo = (Ticks[1] - Ticks[0]) *1000.0  / CLOCKS_PER_SEC;
 	  //printf("%i: %7f s \n", aux, (Tempo/1000.0));
+	  
+	  gettimeofday(&rt1, NULL);
+	  timersub(&rt1, &rt0, &drt);
+	  double Tempo = (double) drt.tv_usec / 1000000 + (double) drt.tv_sec ;
 	  results[aux] = Tempo;
+	  //printf ("Total time = %f seconds\n", Tempo);
 	}	  
 
   strtok_r(input_nome_arquivo, "/", &ptr);
@@ -120,13 +129,13 @@ int main() {
   float media_final = media(results);
   float desvio_padrao = desvio(results, media_final);
   
-  
+ 
   //plotar o grafico
-  printf ( "# x \t y \t    z \t  t\n" );
+  //printf ( "# x \t y \t z \t t\n" );
   
-  for(int f=0; f<101; f++){
-  printf ( "%i \t %f \t %f \t %f\n", f, (results[f]/1000.00), media_final, desvio_padrao);
-  }
+  
+  printf ( "linear %f %f\n",  media_final, desvio_padrao);
+  
   
   return 0;
 }

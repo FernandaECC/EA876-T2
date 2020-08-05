@@ -8,6 +8,7 @@
 #include <time.h>
 #include <math.h>
 #include <string.h>
+#include <sys/time.h>
 
 #define N_PROCESSOS  3
 
@@ -57,7 +58,7 @@ float media(float array[]){
 	int o = 0;
 	for(int k=0; k<101; k++){
 		//printf("%f, ", (array[k]/1000.0));
-		count = count + (array[k]/1000.0);
+		count = count + (array[k]);
 		
 		}
 	
@@ -71,7 +72,7 @@ float desvio(float array[], float a){
 
     float variacoes = 0;
     for (int i = 0; i < 101; i++) {
-        float v = (array[i]/1000.0) - a;
+        float v = (array[i]) - a;
         variacoes += v * v;
         
     }
@@ -97,7 +98,7 @@ int main(){
     scanf("%s", output_nome_arquivo);
     img = abrir_imagem(input_nome_arquivo);
     
-    clock_t Ticks[2];
+   struct timeval rt0, rt1, drt;
     
     int w = img.width;
     int h = img.height;
@@ -138,7 +139,7 @@ int main(){
 	//inicio
 int q = 0;
 for(q=0; q<101; q++){
-    Ticks[0] = clock();
+    gettimeofday(&rt0, NULL);
     
     /*Criar processos filhos*/
     for(int k = 0; k < N_PROCESSOS ; k++){
@@ -171,10 +172,12 @@ for(q=0; q<101; q++){
     }
     
     
-  
-    Ticks[1] = clock();    
-    double Tempo = (Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
-    (*resultado)[q] = Tempo;
+  gettimeofday(&rt1, NULL);
+	  timersub(&rt1, &rt0, &drt);
+	  double Tempo = (double) drt.tv_usec / 1000000 + (double) drt.tv_sec ;
+	   (*resultado)[q] = Tempo;
+	  //printf ("Total time = %f seconds\n", Tempo);
+    
     
     if(q==0){
         for(int i = 0; i < w; i++){
@@ -204,12 +207,13 @@ for(q=0; q<101; q++){
     float desvio_padrao = desvio(*resultado, media_final);
     
     
- //plotar o grafico
-  printf ( "# x \t y \t    z \t  t\n" );
+
+  //plotar o grafico
+   //printf ( "# x \t y \t z \t t\n" );
   
-  for(int f=0; f<101; f++){
-  printf ( "%i \t %f \t %f \t %f\n", f, ((*resultado)[f]/1000.00), media_final, desvio_padrao);
-  }
+  
+   printf ( "proc %f %f\n",  media_final, desvio_padrao);
+ 
     
     //gcc -omain_p main_p.c imageprocessing.c  -I./ -lfreeimage -lm
     return 0;
